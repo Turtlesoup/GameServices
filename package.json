@@ -1,0 +1,13 @@
+{
+  "name": "ancient-fortress",
+  "version": "0.0.1",
+  "dependencies":
+  {
+    "pg": "^4.4.1",
+    "express": "^4.10.2"
+  },
+  "engines":
+  {
+    "node": ">= 0.10.0"
+  }
+}
