@@ -1,14 +1,13 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var bodyParser = require('body-parser');
-var pg = require('pg');
 var encryption = require('./lib/encryption');
+var db = require('./models/database');
+
+var debug = true;
 
 app.use( bodyParser.json() );
 app.use(bodyParser.urlencoded({extended: true}));
-
-var val = encryption.encrypt("hello");
-console.log(encryption.decrypt(val));
 
 app.get('/', function(request, response){
   response.send('<h1>Game Services</h1>');
@@ -16,9 +15,17 @@ app.get('/', function(request, response){
 
 app.post('/', function(request, response)
 {
-  var score = request.body.score;
-  console.dir(score);
+  var data = request.body;
+  if(!debug)
+  {
+    data = encryption.decrypt(data);
+  }
   
+  var name = request.body.name;
+  var score = request.body.score;
+  
+  db.postScore(name, score);
+
   response.writeHead(200, {'Content-Type': 'application/json'});
   response.end(JSON.stringify({score : score}));
 });
