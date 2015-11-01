@@ -2,9 +2,13 @@ var app = require('express')();
 var http = require('http').Server(app);
 var bodyParser = require('body-parser');
 var pg = require('pg');
+var encryption = require('./lib/encryption');
 
 app.use( bodyParser.json() );
-app.use(bodyParser.urlencoded({extended: true})); 
+app.use(bodyParser.urlencoded({extended: true}));
+
+var val = encryption.encrypt("hello");
+console.log(encryption.decrypt(val));
 
 app.get('/', function(request, response){
   response.send('<h1>Game Services</h1>');
