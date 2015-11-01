@@ -15,7 +15,7 @@ function postScore(name, score)
     var client = new pg.Client(connectionString);
     client.connect();
     
-    var query = client.query('INSERT INTO leaderboard (id, name, score) VALUES (DEFAULT,' + name + ',' + score + ')', function(err,result)
+    var query = client.query('INSERT INTO leaderboard (id, name, score) VALUES (DEFAULT,\'' + name + '\',\'' + score + '\')', function(err,result)
     {
       if (err)
       {
