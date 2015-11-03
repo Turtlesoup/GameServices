@@ -24,10 +24,12 @@ app.post('/', function(request, response)
   var name = request.body.name;
   var score = request.body.score;
   
-  db.postScore(name, score);
+  //db.createLeaderboard();
+  db.postScore(name, score, function(id){
+      response.writeHead(200, {'Content-Type': 'application/json'});
+      response.end(JSON.stringify({id : id}));
+  });
 
-  response.writeHead(200, {'Content-Type': 'application/json'});
-  response.end(JSON.stringify({score : score}));
 });
 
 http.listen(process.env.PORT, function(){

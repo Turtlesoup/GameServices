@@ -1,7 +1,7 @@
 var pg = require('pg');
-var connectionString = process.env.DATABASE_URL;
+var connectionString = process.env.DATABASE_URL; //"pg://postgres:postgres@localhost:5432/testdb"
 
-function createLeaderboard(text)
+function createLeaderboard()
 {
     var client = new pg.Client(connectionString);
     client.connect();
@@ -10,17 +10,20 @@ function createLeaderboard(text)
     query.on('end', function() { client.end(); });
 }
 
-function postScore(name, score)
+function postScore(name, score, callback)
 {
     var client = new pg.Client(connectionString);
     client.connect();
     
-    var query = client.query('INSERT INTO leaderboard (id, name, score) VALUES (DEFAULT,\'' + name + '\',\'' + score + '\')', function(err,result)
+    var query = client.query('INSERT INTO leaderboard (id, name, score) VALUES (DEFAULT,\'' + name + '\',\'' + score + '\') RETURNING id', function(err,result)
     {
-      if (err)
-      {
-         return console.error('Error inserting query', err);
-      }
+        if (err)
+        {
+            console.error('Error inserting query', err);
+            throw err;
+        }
+        
+        callback(result.rows[0].id);
     });
     
     query.on('row', function(row) {console.log(row);});
