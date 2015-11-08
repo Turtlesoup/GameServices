@@ -39,7 +39,29 @@ function getLeaderboard(id, limit, offset, callback)
     var client = new pg.Client(connectionString);
     client.connect();
     
-    var queryString = 'SELECT name, score FROM leaderboard WHERE id=' + id + ' ORDER BY score LIMIT '+ limit +' OFFSET '+ offset;
+    var queryString = 'SELECT name, score FROM leaderboard WHERE id=' + id + ' ORDER BY score DESC LIMIT '+ limit +' OFFSET '+ offset;
+    
+    var query = client.query(queryString, function(err, result)
+    {
+        if (err)
+        {
+            console.error('Error inserting query', err);
+            throw err;
+        }
+        
+        callback(result.rows);
+    });
+    
+    query.on('row', function(row) {console.log(row);});
+    query.on('end', function() {client.end();});
+}
+
+function getTopLeaderboard(num, callback)
+{
+    var client = new pg.Client(connectionString);
+    client.connect();
+    
+    var queryString = 'SELECT MAX(score) as name, score FROM leaderboard ORDER BY score DESC LIMIT '+ num;
     
     var query = client.query(queryString, function(err, result)
     {
@@ -59,3 +81,4 @@ function getLeaderboard(id, limit, offset, callback)
 module.exports.createLeaderboard = createLeaderboard;
 module.exports.postScore = postScore;
 module.exports.getLeaderboard = getLeaderboard;
+module.exports.getTopLeaderboard = getTopLeaderboard;

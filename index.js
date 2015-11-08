@@ -21,7 +21,7 @@ app.post('/leaderboard', function(request, response)
     data = encryption.decrypt(data);
   }
   
-  db.getLeaderboard(data.id, 50, 0, function(rows){
+  db.getLeaderboard(data.id, data.limit, data.offset, function(rows){
       response.writeHead(200, {'Content-Type': 'application/json'});
       response.end(JSON.stringify({entries : rows}));
   });
@@ -43,6 +43,22 @@ app.post('/postscore', function(request, response)
       response.end(JSON.stringify({id : id}));
   });
 });
+
+app.post('/topleaderboard', function(request, response)
+{
+  var data = request.body;
+  if(!debug)
+  {
+    data = encryption.decrypt(data);
+  }
+  
+  db.getTopLeaderboard(data.num, function(rows){
+      response.writeHead(200, {'Content-Type': 'application/json'});
+      response.end(JSON.stringify({entries : rows}));
+  });
+});
+
+
 
 http.listen(process.env.PORT, function(){
   console.log('listening on *:'+process.env.PORT);
