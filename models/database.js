@@ -39,7 +39,7 @@ function getLeaderboard(id, limit, offset, callback)
     var client = new pg.Client(connectionString);
     client.connect();
     
-    var queryString = 'SELECT * FROM leaderboard WHERE id=' + id + ' ORDER BY score LIMIT '+ limit +' OFFSET '+ offset;
+    var queryString = 'SELECT name, score FROM leaderboard WHERE id=' + id + ' ORDER BY score LIMIT '+ limit +' OFFSET '+ offset;
     
     var query = client.query(queryString, function(err, result)
     {

@@ -23,7 +23,7 @@ app.post('/leaderboard', function(request, response)
   
   db.getLeaderboard(data.id, 50, 0, function(rows){
       response.writeHead(200, {'Content-Type': 'application/json'});
-      response.end(JSON.stringify({rows : rows}));
+      response.end(JSON.stringify({entries : rows}));
   });
 });
 
