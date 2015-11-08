@@ -61,7 +61,7 @@ function getTopLeaderboard(num, callback)
     var client = new pg.Client(connectionString);
     client.connect();
     
-    var queryString = 'SELECT MAX(score) FROM leaderboard GROUP BY name, score ORDER BY score DESC LIMIT '+ num;
+    var queryString = 'SELECT MAX(score) AS score, name FROM leaderboard GROUP BY name, score ORDER BY score DESC LIMIT '+ num;
     
     var query = client.query(queryString, function(err, result)
     {
