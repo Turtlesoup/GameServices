@@ -25,9 +25,16 @@ app.post('/', function(request, response)
   var score = request.body.score;
   
   //db.createLeaderboard();
+  
+  /*
   db.postScore(name, score, function(id){
       response.writeHead(200, {'Content-Type': 'application/json'});
       response.end(JSON.stringify({id : id}));
+  });*/
+  
+  db.getLeaderboard(data.id, 50, 0, function(rows){
+      response.writeHead(200, {'Content-Type': 'application/json'});
+      response.end(JSON.stringify({rows : rows}));
   });
 
 });
