@@ -13,7 +13,7 @@ app.get('/', function(request, response){
   response.send('<h1>Game Services</h1>');
 });
 
-app.post('/', function(request, response)
+app.post('/leaderboard', function(request, response)
 {
   var data = request.body;
   if(!debug)
@@ -21,22 +21,27 @@ app.post('/', function(request, response)
     data = encryption.decrypt(data);
   }
   
-  var name = request.body.name;
-  var score = request.body.score;
-  
-  //db.createLeaderboard();
-  
-  /*
-  db.postScore(name, score, function(id){
-      response.writeHead(200, {'Content-Type': 'application/json'});
-      response.end(JSON.stringify({id : id}));
-  });*/
-  
   db.getLeaderboard(data.id, 50, 0, function(rows){
       response.writeHead(200, {'Content-Type': 'application/json'});
       response.end(JSON.stringify({rows : rows}));
   });
+});
 
+app.post('/postscore', function(request, response)
+{
+  var data = request.body;
+  if(!debug)
+  {
+    data = encryption.decrypt(data);
+  }
+  
+  var name = data.name;
+  var score = data.score;
+  
+  db.postScore(name, score, function(id){
+      response.writeHead(200, {'Content-Type': 'application/json'});
+      response.end(JSON.stringify({id : id}));
+  });
 });
 
 http.listen(process.env.PORT, function(){
