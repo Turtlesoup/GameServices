@@ -54,10 +54,9 @@ function getLeaderboard(id, limit, callback)
         {
             var playerScore = parseInt(result1.rows[0].score, 10);
             
-            callback([playerScore]);
-            
-            /*
-            var queryString2 = '(SELECT name, score FROM leaderboard WHERE score >= '+ playerScore +' ORDER BY score ASC LIMIT '+ limit +') UNION (SELECT * FROM leaderboard WHERE score < '+ playerScore +' ORDER BY score DESC LIMIT '+ (limit - 1) +') ORDER BY score ASC';
+            //callback([playerScore]);
+
+            var queryString2 = '(SELECT name, score FROM leaderboard WHERE score >= '+ playerScore +' ORDER BY score LIMIT '+ limit +') UNION (SELECT * FROM leaderboard WHERE score < '+ playerScore +' ORDER BY score LIMIT '+ (limit - 1) +') ORDER BY score';
             var query2 = client.query(queryString2, function(err, result2)
             {
                 if (err)
@@ -69,7 +68,6 @@ function getLeaderboard(id, limit, callback)
                 callback(result2.rows);
             });
             query2.on('end', function() {client.end();});
-            */
         }
         else
         {
