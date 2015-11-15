@@ -57,6 +57,9 @@ function getLeaderboard(id, limit, callback)
             //callback([playerScore]);
 
             var queryString2 = '(SELECT name, score FROM leaderboard WHERE score >= '+ playerScore +' ORDER BY score LIMIT '+ limit +') UNION (SELECT * FROM leaderboard WHERE score < '+ playerScore +' ORDER BY score LIMIT '+ (limit - 1) +') ORDER BY score';
+            
+            callback([queryString2])
+            
             var query2 = client.query(queryString2, function(err, result2)
             {
                 if (err)
