@@ -50,11 +50,14 @@ function getLeaderboard(id, limit, callback)
             throw err;
         }
         
+        callback(result1.rows);
+        
+        /*
         if(limit > 0)
         {
             var playerScore = result1.rows[0].score;
             
-            var queryString2 = '(SELECT name, score FROM leaderboard WHERE score >= '+ playerScore +' ORDER BY score LIMIT '+ limit +') UNION (SELECT * FROM leaderboard WHERE score < '+ playerScore +' ORDER BY score LIMIT '+ (limit - 1) +') ORDER BY score';
+            var queryString2 = '(SELECT name, score FROM leaderboard WHERE score >= '+ playerScore +' ORDER BY score ASC LIMIT '+ limit +') UNION (SELECT * FROM leaderboard WHERE score < '+ playerScore +' ORDER BY score DESC LIMIT '+ (limit - 1) +') ORDER BY score ASC';
             var query2 = client.query(queryString2, function(err, result2)
             {
                 if (err)
@@ -71,6 +74,7 @@ function getLeaderboard(id, limit, callback)
         {
             callback(result1.rows);
         }
+        */
 
     });
 }
