@@ -39,9 +39,9 @@ function getLeaderboard(id, limit, offset, callback)
     var client = new pg.Client(connectionString);
     client.connect();
     
-    var queryString = 'SELECT name, score FROM leaderboard WHERE id = ' + id + ' ORDER BY score LIMIT '+ limit +' OFFSET '+ offset;
-    
-    var query = client.query(queryString, function(err, result)
+    var queryString1 = 'SELECT name, score FROM leaderboard WHERE id = ' + id;
+
+    var query1 = client.query(queryString1, function(err, result)
     {
         if (err)
         {
@@ -49,11 +49,34 @@ function getLeaderboard(id, limit, offset, callback)
             throw err;
         }
         
-        callback(result.rows);
+        if(limit > 0)
+        {
+            var playerScore = result.rows[0].score;
+            
+            var queryString2 = '(SELECT name, score FROM leaderboard WHERE score >= '+ playerScore +' ORDER BY score ASC LIMIT '+ limit +') UNION (SELECT * FROM leaderboard WHERE score < '+ playerScore +' ORDER BY score DESC LIMIT '+ (limit - 1) +') ORDER BY score ASC'
+            var query2 = client.query(queryString2, function(err, result)
+            {
+                if (err)
+                {
+                    console.error('Error inserting query', err);
+                    throw err;
+                }
+                
+                callback(result.rows);
+            });
+            
+            query2.on('row', function(row) {console.log(row);});
+            query2.on('end', function() {client.end();});
+        }
+        else
+        {
+            callback(result.rows);
+        }
+
     });
     
-    query.on('row', function(row) {console.log(row);});
-    query.on('end', function() {client.end();});
+    query1.on('row', function(row) {console.log(row);});
+    query1.on('end', function() {client.end();});
 }
 
 function getTopLeaderboard(num, callback)
