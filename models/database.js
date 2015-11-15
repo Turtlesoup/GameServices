@@ -1,5 +1,6 @@
 var pg = require('pg');
-var connectionString = process.env.DATABASE_URL;//"pg://postgres:postgres@localhost:5432/testdb";
+//var connectionString = process.env.DATABASE_URL;
+var connectionString = "pg://postgres:postgres@localhost:15454/testdb";
 
 function createLeaderboard()
 {
@@ -34,12 +35,12 @@ function postScore(name, score, callback)
     query.on('end', function() {client.end();});
 }
 
-function getLeaderboard(id, limit, offset, callback)
+function getLeaderboard(id, limit, callback)
 {
     var client = new pg.Client(connectionString);
     client.connect();
     
-    var queryString1 = 'SELECT name, score FROM leaderboard WHERE id = ' + id;
+    var queryString1 = 'SELECT * FROM leaderboard WHERE id = ' + id;
 
     var query1 = client.query(queryString1, function(err, result)
     {
@@ -53,7 +54,7 @@ function getLeaderboard(id, limit, offset, callback)
         {
             var playerScore = result.rows[0].score;
             
-            var queryString2 = '(SELECT name, score FROM leaderboard WHERE score >= '+ playerScore +' ORDER BY score ASC LIMIT '+ limit +') UNION (SELECT * FROM leaderboard WHERE score < '+ playerScore +' ORDER BY score DESC LIMIT '+ (limit - 1) +') ORDER BY score ASC'
+            var queryString2 = '(SELECT name, score FROM leaderboard WHERE score >= '+ playerScore +' ORDER BY score ASC LIMIT '+ limit +') UNION (SELECT * FROM leaderboard WHERE score < '+ playerScore +' ORDER BY score DESC LIMIT '+ (limit - 1) +') ORDER BY score ASC';
             var query2 = client.query(queryString2, function(err, result)
             {
                 if (err)
@@ -65,7 +66,7 @@ function getLeaderboard(id, limit, offset, callback)
                 callback(result.rows);
             });
             
-            query2.on('row', function(row) {console.log(row);});
+            //query2.on('row', function(row) {console.log(row);});
             query2.on('end', function() {client.end();});
         }
         else
@@ -75,8 +76,8 @@ function getLeaderboard(id, limit, offset, callback)
 
     });
     
-    query1.on('row', function(row) {console.log(row);});
-    query1.on('end', function() {client.end();});
+    //query1.on('row', function(row) {console.log(row);});
+    //query1.on('end', function() {client.end();});
 }
 
 function getTopLeaderboard(num, callback)

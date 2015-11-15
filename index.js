@@ -21,7 +21,7 @@ app.post('/leaderboard', function(request, response)
     data = encryption.decrypt(data);
   }
   
-  db.getLeaderboard(data.id, data.limit, data.offset, function(rows){
+  db.getLeaderboard(data.id, data.limit, function(rows){
       response.writeHead(200, {'Content-Type': 'application/json'});
       response.end(JSON.stringify({entries : rows}));
   });
