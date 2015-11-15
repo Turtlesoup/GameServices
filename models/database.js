@@ -1,6 +1,6 @@
 var pg = require('pg');
-//var connectionString = process.env.DATABASE_URL;
-var connectionString = "pg://postgres:postgres@localhost:15454/testdb";
+var connectionString = process.env.DATABASE_URL;
+//var connectionString = "pg://postgres:postgres@localhost:15454/testdb";
 
 function createLeaderboard()
 {
@@ -65,8 +65,6 @@ function getLeaderboard(id, limit, callback)
                 
                 callback(result.rows);
             });
-            
-            //query2.on('row', function(row) {console.log(row);});
             query2.on('end', function() {client.end();});
         }
         else
@@ -75,9 +73,6 @@ function getLeaderboard(id, limit, callback)
         }
 
     });
-    
-    //query1.on('row', function(row) {console.log(row);});
-    //query1.on('end', function() {client.end();});
 }
 
 function getTopLeaderboard(num, callback)

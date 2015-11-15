@@ -34,11 +34,8 @@ app.post('/postscore', function(request, response)
   {
     data = encryption.decrypt(data);
   }
-  
-  var name = data.name;
-  var score = data.score;
-  
-  db.postScore(name, score, function(id){
+
+  db.postScore(data.name, data.score, function(id){
       response.writeHead(200, {'Content-Type': 'application/json'});
       response.end(JSON.stringify({id : id}));
   });
