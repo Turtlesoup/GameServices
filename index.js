@@ -2,9 +2,7 @@ var app = require('express')();
 var http = require('http').Server(app);
 var bodyParser = require('body-parser');
 var encryption = require('./lib/encryption');
-var db = require('./models/database');
-
-var debug = true;
+var db = require('./models/leaderboard');
 
 app.use( bodyParser.json() );
 app.use(bodyParser.urlencoded({extended: true}));
@@ -16,7 +14,7 @@ app.get('/', function(request, response){
 app.post('/leaderboard', function(request, response)
 {
   var data = request.body;
-  if(!debug)
+  if(!process.env.DEBUG)
   {
     data = encryption.decrypt(data);
   }
@@ -30,7 +28,7 @@ app.post('/leaderboard', function(request, response)
 app.post('/postscore', function(request, response)
 {
   var data = request.body;
-  if(!debug)
+  if(!process.env.DEBUG)
   {
     data = encryption.decrypt(data);
   }
@@ -44,7 +42,7 @@ app.post('/postscore', function(request, response)
 app.post('/topleaderboard', function(request, response)
 {
   var data = request.body;
-  if(!debug)
+  if(!process.env.DEBUG)
   {
     data = encryption.decrypt(data);
   }
