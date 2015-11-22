@@ -41,7 +41,7 @@ function getLeaderboard(id, limit, callback)
     client.connect();
     
     var queryString = ' WITH global_rank AS (                                                            \
-                          SELECT *, rank() OVER (ORDER BY score DESC) FROM leaderboard         \
+                          SELECT *, rank() OVER (ORDER BY score DESC) FROM leaderboard                   \
                         )                                                                                \
                         SELECT * FROM global_rank                                                        \
                         WHERE rank <= (select rank from global_rank where id = ' + id + ')+' + limit + ' \
