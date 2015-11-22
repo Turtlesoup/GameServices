@@ -40,9 +40,14 @@ function getLeaderboard(id, limit, callback)
     var client = new pg.Client(connectionString);
     client.connect();
     
-    var queryString1 = 'SELECT * FROM leaderboard WHERE id = ' + id;
+    var queryString = ' WITH global_rank AS (                                                            \
+                          SELECT *, rank() OVER (ORDER BY score DESC) FROM leaderboard         \
+                        )                                                                                \
+                        SELECT * FROM global_rank                                                        \
+                        WHERE rank <= (select rank from global_rank where id = ' + id + ')+' + limit + ' \
+                        AND   rank >= (select rank from global_rank where id = ' + id + ')-' + limit; 
 
-    var query1 = client.query(queryString1, function(err, result1)
+    var query = client.query(queryString, function(err, result)
     {
         if (err)
         {
@@ -50,30 +55,7 @@ function getLeaderboard(id, limit, callback)
             throw err;
         }
         
-        if(limit > 0)
-        {
-            var playerScore = parseInt(result1.rows[0].score, 10);
-            
-            //callback([playerScore]);
-
-            var queryString2 = '(SELECT * FROM leaderboard WHERE score >= '+ playerScore +' ORDER BY score ASC LIMIT '+ limit +') UNION (SELECT * FROM leaderboard WHERE score < '+ playerScore +' ORDER BY score DESC LIMIT '+ (limit - 1) +') ORDER BY score ASC';
-            var query2 = client.query(queryString2, function(err, result2)
-            {
-                if (err)
-                {
-                    console.error('Error inserting query', err);
-                    throw err;
-                }
-                
-                callback(result2.rows);
-            });
-            query2.on('end', function() {client.end();});
-        }
-        else
-        {
-            callback(result1.rows);
-        }
-
+        callback(result.rows);
     });
 }
 
