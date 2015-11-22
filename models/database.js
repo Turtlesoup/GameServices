@@ -1,7 +1,9 @@
 var pg = require('pg');
 var connectionString = process.env.DATABASE_URL;
-//var connectionString = "pg://postgres:postgres@localhost:15454/testdb";
 
+/**
+ * Creates a Leaderboard table containing an id, name, and score value for each entry
+ */
 function createLeaderboard()
 {
     var client = new pg.Client(connectionString);
@@ -13,6 +15,17 @@ function createLeaderboard()
     query.on('end', function() { client.end(); });
 }
 
+/**
+ * @callback postScoreRequestCallback
+ * @param {number} id - the id of the submitted score within the Leaderboard table.
+ */
+
+/**
+ * Posts a score to the Leaderboard table and returns the id of the submitted score.
+ * @param {string} name - The name to be associated with the submitted score.
+ * @param {number} score - The score value.
+ * @param {postScoreRequestCallback} callback - The request callback function.
+ */
 function postScore(name, score, callback)
 {
     var client = new pg.Client(connectionString);
@@ -35,17 +48,28 @@ function postScore(name, score, callback)
     query.on('end', function() {client.end();});
 }
 
+/**
+ * @callback getLeaderboardRequestCallback
+ * @param {Object[]} rows - the rows of the Leaderboard table corresponding to the query.
+ */
+
+/**
+ * Returns the row and neighbouring rows of the ranked Leaderboard table corresponding to the given id.
+ * @param {number} id - The id of the leaderboard row to retrieve.
+ * @param {number} limit - the limit of the range (above and below) of ranked rows to return along with the row corresponding to the requested id.
+ * @param {getLeaderboardRequestCallback} callback - The request callback function.
+ */
 function getLeaderboard(id, limit, callback)
 {
     var client = new pg.Client(connectionString);
     client.connect();
     
-    var queryString = ' WITH global_rank AS (                                                            \
-                          SELECT *, rank() OVER (ORDER BY score DESC) FROM leaderboard                   \
-                        )                                                                                \
-                        SELECT * FROM global_rank                                                        \
-                        WHERE rank <= (select rank from global_rank where id = ' + id + ')+' + limit + ' \
-                        AND   rank >= (select rank from global_rank where id = ' + id + ')-' + limit; 
+    var queryString = ' WITH global_rank AS (                                                                       \
+                          SELECT *, dense_rank() OVER (ORDER BY score DESC) FROM leaderboard                        \
+                        )                                                                                           \
+                        SELECT * FROM global_rank                                                                   \
+                        WHERE dense_rank <= (select dense_rank from global_rank where id = ' + id + ')+' + limit + '\
+                        AND   dense_rank >= (select dense_rank from global_rank where id = ' + id + ')-' + limit; 
 
     var query = client.query(queryString, function(err, result)
     {
@@ -59,6 +83,16 @@ function getLeaderboard(id, limit, callback)
     });
 }
 
+/**
+ * @callback getTopLeaderboardRequestCallback
+ * @param {Object[]} rows - the rows of the Leaderboard table corresponding to the query.
+ */
+
+/**
+ * Returns the top N rows of the ranked Leaderboard table where N is equal to the given parameter.
+ * @param {number} num - The number of rows to retrieve.
+ * @param {getTopLeaderboardRequestCallback} callback - The request callback function.
+ */
 function getTopLeaderboard(num, callback)
 {
     var client = new pg.Client(connectionString);
