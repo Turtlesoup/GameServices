@@ -6,7 +6,7 @@ var connectionString = process.env.DATABASE_URL;
  */
 function createLeaderboard()
 {
-    var client = new pg.Client(connectionString);
+    var client = new pg.Client(connectionString + '?ssl=true');
     client.connect();
     
     var queryString = 'CREATE TABLE leaderboard(id SERIAL PRIMARY KEY, name VARCHAR(40) not null, score NUMERIC(10))';
@@ -28,7 +28,7 @@ function createLeaderboard()
  */
 function postScore(name, score, callback)
 {
-    var client = new pg.Client(connectionString);
+    var client = new pg.Client(connectionString + '?ssl=true');
     client.connect();
     
     var queryString = 'INSERT INTO leaderboard (id, name, score) VALUES (DEFAULT,\'' + name + '\',\'' + score + '\') RETURNING id';
@@ -61,7 +61,7 @@ function postScore(name, score, callback)
  */
 function getLeaderboard(id, limit, callback)
 {
-    var client = new pg.Client(connectionString);
+    var client = new pg.Client(connectionString + '?ssl=true');
     client.connect();
     
     var queryString = ' WITH global_rank AS (                                                                       \
@@ -95,7 +95,7 @@ function getLeaderboard(id, limit, callback)
  */
 function getTopLeaderboard(num, callback)
 {
-    var client = new pg.Client(connectionString);
+    var client = new pg.Client(connectionString + '?ssl=true');
     client.connect();
     
     var queryString = 'SELECT MAX(score) AS score, name FROM leaderboard GROUP BY name, score ORDER BY score DESC LIMIT '+ num;

@@ -19,10 +19,17 @@ app.post('/leaderboard', function(request, response)
     data = encryption.decrypt(data);
   }
   
-  leaderboard.getLeaderboard(data.id, data.limit, function(rows){
-      response.writeHead(200, {'Content-Type': 'application/json'});
-      response.end(JSON.stringify({entries : rows}));
-  });
+  if(data.id && data.limit)
+  {
+    leaderboard.getLeaderboard(data.id, data.limit, function(rows){
+        response.writeHead(200, {'Content-Type': 'application/json'});
+        response.end(JSON.stringify({entries : rows}));
+    });
+  }
+  else
+  {
+    response.end(JSON.stringify({error : "invalid parameters"}));
+  }
 });
 
 app.post('/postscore', function(request, response)
@@ -33,10 +40,17 @@ app.post('/postscore', function(request, response)
     data = encryption.decrypt(data);
   }
 
-  leaderboard.postScore(data.name, data.score, function(id){
-      response.writeHead(200, {'Content-Type': 'application/json'});
-      response.end(JSON.stringify({id : id}));
-  });
+  if(data.name && data.score)
+  {
+    leaderboard.postScore(data.name, data.score, function(id){
+        response.writeHead(200, {'Content-Type': 'application/json'});
+        response.end(JSON.stringify({id : id}));
+    });
+  }
+  else
+  {
+    response.end(JSON.stringify({error : "invalid parameters"}));
+  }
 });
 
 app.post('/topleaderboard', function(request, response)
@@ -47,10 +61,17 @@ app.post('/topleaderboard', function(request, response)
     data = encryption.decrypt(data);
   }
   
-  leaderboard.getTopLeaderboard(data.num, function(rows){
-      response.writeHead(200, {'Content-Type': 'application/json'});
-      response.end(JSON.stringify({entries : rows}));
-  });
+  if(data.num)
+  {
+    leaderboard.getTopLeaderboard(data.num, function(rows){
+        response.writeHead(200, {'Content-Type': 'application/json'});
+        response.end(JSON.stringify({entries : rows}));
+    });
+  }
+  else
+  {
+    response.end(JSON.stringify({error : "invalid parameters"}));
+  }
 });
 
 
