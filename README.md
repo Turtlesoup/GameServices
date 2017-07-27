@@ -1,2 +1,2 @@
-# GameServices
-A base backend service for games
+# NodeJSLeaderboard
+A base node js leaderboard
